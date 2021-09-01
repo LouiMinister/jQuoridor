@@ -1,9 +1,9 @@
-function Gutter({ width, height }) {
+function Gutter({ text }) {
 
 
   return (
-    <div style={{ width: "100%", height: "100%", backgroundColor: 'black', borderStyle: "solid", borderWidth: "2px", borderColor: 'WindowFrame' }}>
-
+    <div style={{ display: "flex", width: "100%", height: "100%", backgroundColor: '', borderStyle: "solid", borderWidth: "2px", borderColor: 'WindowFrame', fontSize: "4px", justifyContent: "center", alignItems: "center" }}>
+      {text}
     </div>
   );
 }
