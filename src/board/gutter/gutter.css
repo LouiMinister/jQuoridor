@@ -1,37 +1,29 @@
 
-.gutter-vertical {
+.gutter {
     background: #fff;
     border: 1px solid #999;
     float: left;
     font-size: 24px;
     font-weight: bold;
     line-height: 10px;
-    height: 34px;
     margin-right: -1px;
     margin-top: -1px;
     padding: 0;
     text-align: center;
-    width: 10px;
   }
-  .gutter-vertical:focus {
-    outline: none;
-  }
-  
-  .gutter-horizonal {
-    background: #fff;
-    border: 1px solid #999;
-    float: left;
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 10px;
-    height: 10px;
-    margin-right: -1px;
-    margin-top: -1px;
-    padding: 0;
-    text-align: center;
-    width: 34px;
-  }
-  .gutter-horizonal:focus {
-    outline: none;
-  }
-  
+
+.gutter:focus {
+  outline: none;
+}
+
+.vertical {
+  width: 10px;
+  height: 34px;
+
+}
+
+.horizontal {
+  width: 34px;
+  height: 10px;
+
+}

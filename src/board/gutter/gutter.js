@@ -4,9 +4,9 @@ import React from "react";
 class Gutter extends React.Component {
     render() {
       if (this.props.type === "vertical") {
-        return <button className="gutter-vertical">{/* TODO */}</button>;
+        return <button className="gutter vertical">{/* TODO */}</button>;
       } else {
-        return <button className="gutter-horizonal">{/* TODO */}</button>;
+        return <button className="gutter horizontal">{/* TODO */}</button>;
       }
     }
   }
