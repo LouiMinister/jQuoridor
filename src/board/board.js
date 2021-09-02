@@ -6,15 +6,18 @@ import React from "react";
 class Board extends React.Component {
 
     renderSquare(x_coords, y_coords) {
-      return <Square />;
+      let key = `${ x_coords }:${ y_coords }`
+      return <Square key={key}/>;
     }
   
     renderGutter(x_coords, y_coords, type) {
-      return <Gutter type={type} />;
+      let key = `${ x_coords }:${ y_coords }`
+      return <Gutter type={type} key={key}/>;
     }
   
     renderMarker(x_coords, y_coords) {
-      return <Marker />;
+      let key = `${ x_coords }:${ y_coords }`
+      return <Marker key={key}/>;
     }
   
     render() {
@@ -45,7 +48,7 @@ class Board extends React.Component {
               else if (x_idx % 2 === 1 && y_idx % 2 === 0){
                 return this.renderGutter(x_idx,y_idx, "vertical");
               }
-              else if (x_idx % 2 === 0 && y_idx % 2 === 1){
+              else {
                 return this.renderGutter(x_idx,y_idx, "horizontal");
               }
             })
