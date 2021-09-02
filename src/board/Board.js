@@ -1,7 +1,15 @@
+import { useEffect, useState } from "react";
+import { BoardMap } from "./BoardMap";
 import Cell from "./cell/Cell";
 import Gutter from "./gutter/Gutter";
 
 function Board({ width, height }) {
+  const [mouseCoord, setMouseCoord] = useState({ x: undefined, y: undefined });
+  const [boardMap, setBoardMap] = useState(new BoardMap(width, height));
+
+  useEffect(() => {
+    return;
+  }, [mouseCoord])
 
   const boardStyle = {
     display: "grid",
@@ -10,21 +18,22 @@ function Board({ width, height }) {
   }
 
   return (
-    <div style={boardStyle}>
-      {
-        new Array(height * 2 - 1).fill(null).map((_, columnIdx) => {
-          return new Array(width * 2 - 1).fill(null).map((_, rowIdx) => {
-            if (columnIdx % 2 === 0 && rowIdx % 2 === 0) {
-              const key = `${Math.floor(columnIdx / 2)}:${Math.floor(rowIdx / 2)}`;
-              return <Cell text={key} key={key} />
+    <>
+      <div>
+        {`xCoord: ${mouseCoord.x} yCoord: ${mouseCoord.y}`}
+      </div>
+      <div style={boardStyle}>
+        {
+          boardMap.buildToAry(({ coord, key, space }) => {
+            if (Number.isInteger(coord.x) && Number.isInteger(coord.y)) {
+              return <Cell text={key} key={key} onMouseOver={() => setMouseCoord(coord)} status={space.status} />
             } else {
-              const key = `${(columnIdx) / 2}:${(rowIdx) / 2}`
-              return (<Gutter text={key} key={key} />)
+              return <Gutter text={key} key={key} onMouseOver={() => setMouseCoord(coord)} status={space.status} />
             }
           })
-        })
-      }
-    </div>
+        }
+      </div>
+    </>
   );
 }
 
