@@ -3,8 +3,10 @@ import { BoardMap } from "./BoardMap";
 import Cell from "./cell/Cell";
 import Gutter from "./gutter/Gutter";
 
-function Board({ width, height }) {
-  const [mouseCoord, setMouseCoord] = useState({ x: undefined, y: undefined });
+function Board({ width, height }:
+  { width: number, height: number }) {
+
+  const [mouseCoord, setMouseCoord] = useState({ x: 0, y: 0 });
   const [boardMap, setBoardMap] = useState(new BoardMap(width, height));
 
   useEffect(() => {
