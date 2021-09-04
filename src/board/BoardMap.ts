@@ -1,8 +1,8 @@
 import { Coord, CoordKey } from './Coord';
 import { Obstacle } from './Obstacle';
 
-export type Space = { coord: Coord, status: SpaceStatus };
-export type SpaceStatus = 'empty' | 'obstacle' | 'pre-obstacle';
+export type Space = { coord: Coord, status: SpaceStatus, owner: string };
+export type SpaceStatus = 'empty' | 'obstacle' | 'pre-obstacle' | 'marker' | 'pre-marker';
 export type Spaces = { [key: CoordKey]: Space }; // key: ${number}:${number}
 export type obstacleDirection = 'horizontal' | 'vertical';
 
@@ -23,9 +23,12 @@ export class BoardMap {
         const { x, y } = { x: xI / 2, y: yI / 2 };
         const coord = new Coord(x, y);
         const coordKey = coord.toKey();
-        spaces[coordKey] = { coord: coord, status: 'empty' };
+        spaces[coordKey] = { coord: coord, status: 'empty', owner: '' };
       }
     }
+    spaces[`${4}:${0}`] = { ...spaces[`${4}:${0}`], status: 'marker', owner: 'away' };
+    spaces[`${4}:${8}`] = { ...spaces[`${4}:${8}`], status: 'marker', owner: 'home' };
+
     this.spaces = spaces;
   }
 
@@ -37,7 +40,7 @@ export class BoardMap {
         const space = this.spaces[coord.toKey()];
         return callbackFn({ coord, space });
       })
-    })
+    });
   }
 
   public coordToKey(x: number, y: number) {
@@ -49,9 +52,9 @@ export class BoardMap {
     this.spaces[key] = space;
   }
 
-  public buildObstacle(coord: Coord, direction: obstacleDirection) {
+  public buildObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
     if (!coord.isObstacleCenter()) { return; }
-    const obstacle = new Obstacle(coord, direction, 'obstacle');
+    const obstacle = new Obstacle(coord, direction, 'obstacle', owner);
     if (this.isObstacleConflict(obstacle)) { return; }
     const obstacleAsSpaceAry = obstacle.toSpaceAry();
     for (const obstacleBySpace of obstacleAsSpaceAry) {
@@ -59,9 +62,9 @@ export class BoardMap {
     }
   }
 
-  public buildPreObstacle(coord: Coord, direction: obstacleDirection) {
+  public buildPreObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
     if (!coord.isObstacleCenter()) { return; }
-    const obstacle = new Obstacle(coord, direction, 'pre-obstacle');
+    const obstacle = new Obstacle(coord, direction, 'pre-obstacle', owner);
     if (this.isObstacleConflict(obstacle)) { return; }
     const obstacleAsSpaceAry = obstacle.toSpaceAry();
     for (const obstacleBySpace of obstacleAsSpaceAry) {
@@ -85,7 +88,7 @@ export class BoardMap {
         const { x, y } = { x: xI / 2, y: yI / 2 };
         const coord = new Coord(x, y);
         if (this.spaces[coord.toKey()].status === 'pre-obstacle') {
-          this.spaces[coord.toKey()] = { coord: coord, status: 'empty' };
+          this.spaces[coord.toKey()] = { coord: coord, status: 'empty', owner: '' };
         }
       }
     }

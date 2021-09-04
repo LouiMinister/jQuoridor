@@ -9,11 +9,11 @@ import { ObstacleDirection } from './Obstacle';
 function boardMapReducer(boardMap: BoardMap, action): BoardMap {
   switch (action.type) {
     case 'BUILD_OBSTACLE':
-      boardMap.buildObstacle(new Coord(action.x, action.y), action.obstacleDirectionMode);
+      boardMap.buildObstacle(new Coord(action.x, action.y), action.obstacleDirectionMode, action.playerTurn);
       break;
     case 'BUILD_PRE_OBSTACLE':
       boardMap.clearPreObstacle();
-      boardMap.buildPreObstacle(new Coord(action.x, action.y), action.obstacleDirectionMode);
+      boardMap.buildPreObstacle(new Coord(action.x, action.y), action.obstacleDirectionMode, action.playerTurn);
       console.log('BUILD_PRE_OBSTACLE', action);
       break;
   }
@@ -26,14 +26,15 @@ function Board({ width, height }:
   const [mouseCoord, setMouseCoord] = useState({ x: 0, y: 0 });
   const [obstacleDirectionMode, setObstacleDirectionMode] = useState('horizontal' as ObstacleDirection)
   const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height));
+  const [playerTurn, setPlayerTurn] = useState('home');
 
   useEffect(() => {
-    boardMapDispatch({ type: 'BUILD_PRE_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode });
-  }, [mouseCoord, obstacleDirectionMode])
+    boardMapDispatch({ type: 'BUILD_PRE_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn });
+  }, [mouseCoord, obstacleDirectionMode, playerTurn])
 
   const onClickGutter = useCallback(() => {
-    boardMapDispatch({ type: 'BUILD_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode });
-  }, [mouseCoord, obstacleDirectionMode]);
+    boardMapDispatch({ type: 'BUILD_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn });
+  }, [mouseCoord, obstacleDirectionMode, playerTurn]);
 
   const onMouseOver = useCallback((coord) => {
     const { x, y } = coord;
@@ -65,7 +66,7 @@ function Board({ width, height }:
         {
           boardMap.getSpaceToAry(({ coord, space }) => {
             if (Number.isInteger(coord.x) && Number.isInteger(coord.y)) {
-              return <Cell text={coord.toKey()} key={coord.toKey()} onMouseOver={() => onMouseOver(coord)} status={space.status} />
+              return <Cell text={coord.toKey()} key={coord.toKey()} onMouseOver={() => onMouseOver(coord)} status={space.status} owner={space.owner} />
             } else {
               return <Gutter text={coord.toKey()} key={coord.toKey()} onMouseOver={() => onMouseOver(coord)} onClick={() => onClickGutter()} status={space.status} />
             }

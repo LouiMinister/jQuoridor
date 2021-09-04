@@ -6,11 +6,13 @@ export type ObstacleDirection = 'horizontal' | 'vertical';
 export class Obstacle {
   coord: Coord;
   direction: ObstacleDirection;
-  status: SpaceStatus
-  constructor(coord: Coord, direction: ObstacleDirection, status: SpaceStatus) {
+  status: SpaceStatus;
+  owner: string;
+  constructor(coord: Coord, direction: ObstacleDirection, status: SpaceStatus, owner: string) {
     this.coord = coord;
     this.direction = direction;
     this.status = status;
+    this.owner = owner;
   }
 
   public toSpaceAry(): Space[] {
@@ -21,7 +23,7 @@ export class Obstacle {
       } else {
         coord = new Coord(this.coord.x, this.coord.y + val);
       }
-      return { coord: coord, status: this.status } as Space
+      return { coord: coord, status: this.status, owner: this.owner } as Space
     });
     return obstacle;
   }

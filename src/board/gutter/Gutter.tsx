@@ -4,7 +4,7 @@ import { SpaceStatus } from './../BoardMap';
 function Gutter({ text, onMouseOver, onClick, status }:
   { text: string, onMouseOver: () => void, onClick: () => void, status: SpaceStatus }) {
 
-  let backgroundColor: string;
+  let backgroundColor: string = '';
   switch (status) {
     case 'empty':
       backgroundColor = '';
