@@ -52,8 +52,9 @@ export class BoardMap {
   public buildObstacle(coord: Coord, direction: obstacleDirection) {
     if (!coord.isObstacleCenter()) { return; }
     const obstacle = new Obstacle(coord, direction, 'obstacle');
-    const obstacleBySpaceAry = obstacle.toSpaceAry();
-    for (const obstacleBySpace of obstacleBySpaceAry) {
+    if (this.isObstacleConflict(obstacle)) { return; }
+    const obstacleAsSpaceAry = obstacle.toSpaceAry();
+    for (const obstacleBySpace of obstacleAsSpaceAry) {
       this.updateSpace(obstacleBySpace);
     }
   }
@@ -61,10 +62,21 @@ export class BoardMap {
   public buildPreObstacle(coord: Coord, direction: obstacleDirection) {
     if (!coord.isObstacleCenter()) { return; }
     const obstacle = new Obstacle(coord, direction, 'pre-obstacle');
-    const obstacleBySpaceAry = obstacle.toSpaceAry();
-    for (const obstacleBySpace of obstacleBySpaceAry) {
+    if (this.isObstacleConflict(obstacle)) { return; }
+    const obstacleAsSpaceAry = obstacle.toSpaceAry();
+    for (const obstacleBySpace of obstacleAsSpaceAry) {
       this.updateSpace(obstacleBySpace);
     }
+  }
+
+  private isObstacleConflict(obstacle: Obstacle) {
+    const obstacleAsSpaceAry = obstacle.toSpaceAry();
+    for (const obstacleBySpace of obstacleAsSpaceAry) {
+      if (this.spaces[obstacleBySpace.coord.toKey()].status === 'obstacle') {
+        return true;
+      }
+    }
+    return false;
   }
 
   public clearPreObstacle() {
