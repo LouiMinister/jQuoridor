@@ -26,11 +26,11 @@ function Board({ width, height }:
       </div>
       <div style={boardStyle}>
         {
-          boardMap.buildToAry(({ coord, key, space }) => {
+          boardMap.getSpaceToAry(({ coord, space }) => {
             if (Number.isInteger(coord.x) && Number.isInteger(coord.y)) {
-              return <Cell text={key} key={key} onMouseOver={() => setMouseCoord(coord)} status={space.status} />
+              return <Cell text={coord.getKey()} key={coord.getKey()} onMouseOver={() => setMouseCoord(coord)} status={space.status} />
             } else {
-              return <Gutter text={key} key={key} onMouseOver={() => setMouseCoord(coord)} status={space.status} />
+              return <Gutter text={coord.getKey()} key={coord.getKey()} onMouseOver={() => setMouseCoord(coord)} status={space.status} />
             }
           })
         }
