@@ -28,9 +28,9 @@ function Board({ width, height }:
         {
           boardMap.getSpaceToAry(({ coord, space }) => {
             if (Number.isInteger(coord.x) && Number.isInteger(coord.y)) {
-              return <Cell text={coord.getKey()} key={coord.getKey()} onMouseOver={() => setMouseCoord(coord)} status={space.status} />
+              return <Cell text={coord.toKey()} key={coord.toKey()} onMouseOver={() => setMouseCoord(coord)} status={space.status} />
             } else {
-              return <Gutter text={coord.getKey()} key={coord.getKey()} onMouseOver={() => setMouseCoord(coord)} status={space.status} />
+              return <Gutter text={coord.toKey()} key={coord.toKey()} onMouseOver={() => setMouseCoord(coord)} status={space.status} />
             }
           })
         }

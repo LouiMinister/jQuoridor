@@ -7,7 +7,7 @@ export class Coord {
     this.y = y;
   }
 
-  public getKey(): CoordKey {
+  public toKey(): CoordKey {
     return `${this.x}:${this.y}`;
   }
 }

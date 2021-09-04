@@ -21,7 +21,7 @@ export class BoardMap {
       for (let xI = 0; xI < this.width * 2 - 1; xI++) {
         const { x, y } = { x: xI / 2, y: yI / 2 };
         const coord = new Coord(x, y);
-        const coordKey = coord.getKey();
+        const coordKey = coord.toKey();
         spaces[coordKey] = { coord: coord, status: 'empty' };
       }
     }
@@ -33,7 +33,7 @@ export class BoardMap {
       return new Array(this.width * 2 - 1).fill(null).map((_, rowIdx) => {
         const { x, y } = { x: columnIdx / 2, y: rowIdx / 2 };
         const coord = new Coord(x, y);
-        const space = this.spaces[coord.getKey()];
+        const space = this.spaces[coord.toKey()];
         return callbackFn({ coord, space });
       })
     })
