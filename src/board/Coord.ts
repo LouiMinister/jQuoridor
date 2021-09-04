@@ -10,4 +10,8 @@ export class Coord {
   public toKey(): CoordKey {
     return `${this.x}:${this.y}`;
   }
+
+  public isObstacleCenter(): boolean {
+    return this.x % 1 === 0.5 && this.y % 1 === 0.5;
+  }
 }
