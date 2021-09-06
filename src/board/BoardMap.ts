@@ -73,7 +73,7 @@ export class BoardMap {
   }
 
   public isSpaceStatus(coord: Coord, status: SpaceStatus) {
-    return this.spaces[coord.toKey()].status === status;
+    return this.isInBoard(coord) && this.spaces[coord.toKey()].status === status;
   }
 
   public isInBoard(coord: Coord) {
@@ -85,13 +85,12 @@ export class BoardMap {
     const predictedPath = [new Coord(-1, 0), new Coord(1, 0), new Coord(0, 1), new Coord(0, -1)]
       .reduce((coordAry: Coord[], delta: Coord) => {
         let movedCoord = new Coord(coord.x + delta.x, coord.y + delta.y);
-
         if (!this.isInBoard(movedCoord) || this.isSpaceStatus(movedCoord.between(coord), 'obstacle')) { return coordAry; } // 보드 범위 밖이거나 장애물로 막힌 경우
         if (!this.isSpaceStatus(movedCoord, 'marker')) {  // 움직일 곳에 마커가 없는 경우
           coordAry.push(movedCoord);
         } else {  // 움직일 곳에 마커가 있는 경우
           const jumpedCoords = new Coord(movedCoord.x + delta.x, movedCoord.y + delta.y); // 마커 점프
-          if (this.isSpaceStatus(movedCoord.between(jumpedCoords), 'obstacle') || this.isInBoard(jumpedCoords)) {  // 점프할 곳이 장애물로 막혀있는 경우이거나 보드 밖인경우
+          if (!this.isInBoard(jumpedCoords) || this.isSpaceStatus(movedCoord.between(jumpedCoords), 'obstacle')) {  // 점프할 곳이 장애물로 막혀있는 경우이거나 보드 밖인경우
             const jumpedSideCoords: Coord[] = [];
             if (delta.x === 0) {
               jumpedSideCoords.push(new Coord(movedCoord.x + 1, movedCoord.y), new Coord(movedCoord.x - 1, movedCoord.y));  // 상대 마커 옆으로 뛰기
