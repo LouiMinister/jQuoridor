@@ -52,6 +52,13 @@ export class BoardMap {
     this.spaces[key] = space;
   }
 
+  public moveMarker(coord: Coord, owner: string) {
+    this.clearSpaces(({ space }) => {
+      return ((space.status === 'marker' || space.status === 'pre-marker') && space.owner === owner);
+    });
+    this.updateSpace({ coord: coord, status: 'marker', owner: owner });
+  }
+
   public buildObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
     if (!coord.isObstacleCenter()) { return; }
     const obstacle = new Obstacle(coord, direction, 'obstacle', owner);

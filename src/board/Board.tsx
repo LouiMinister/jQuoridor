@@ -18,6 +18,9 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
     case 'BUILD_PRE_MARKER':
       boardMap.predictNextMarkerPath(new Coord(action.x, action.y), action.playerTurn);
       break;
+    case 'MOVE_MARKER':
+      boardMap.moveMarker(new Coord(action.x, action.y), action.playerTurn);
+      break;
   }
   return _.cloneDeep(boardMap);
 }
@@ -47,6 +50,10 @@ function Board({ width, height }:
     boardMapDispatch({ type: 'BUILD_PRE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn });
   }, [mouseCoord.x, mouseCoord.y, playerTurn]);
 
+  const onClickPreMarker = useCallback(() => {
+    boardMapDispatch({ type: 'MOVE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn });
+  }, [mouseCoord, playerTurn]);
+
   const switchObstacleDirectionMode = useCallback(() => {
     if (obstacleDirectionMode === 'horizontal') {
       setObstacleDirectionMode('vertical');
@@ -66,13 +73,13 @@ function Board({ width, height }:
   return (
     <>
       <div>
-        {`xCoord: ${mouseCoord.x} yCoord: ${mouseCoord.y}`}
+        {`xCoord: ${mouseCoord.x} yCoord: ${mouseCoord.y} payerTurn: ${playerTurn}`}
       </div>
       <div style={boardStyle} onContextMenu={(e) => { e.preventDefault(); switchObstacleDirectionMode(); }}>
         {
           boardMap.getSpaceToAry(({ coord, space }) => {
             if (Number.isInteger(coord.x) && Number.isInteger(coord.y)) {
-              return <Cell text={coord.toKey()} key={coord.toKey()} onMouseOver={() => onMouseOver(coord)} onClickMarker={() => onClickMarker()} status={space.status} owner={space.owner} />
+              return <Cell text={coord.toKey()} key={coord.toKey()} onMouseOver={() => onMouseOver(coord)} onClickMarker={() => onClickMarker()} onClickPreMarker={() => { onClickPreMarker() }} status={space.status} owner={space.owner} />
             } else {
               return <Gutter text={coord.toKey()} key={coord.toKey()} onMouseOver={() => onMouseOver(coord)} onClick={() => onClickGutter()} status={space.status} />
             }
