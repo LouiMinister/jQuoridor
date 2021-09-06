@@ -12,7 +12,7 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
       boardMap.buildObstacle(new Coord(action.x, action.y), action.obstacleDirectionMode, action.playerTurn);
       break;
     case 'BUILD_PRE_OBSTACLE':
-      boardMap.clearPreObstacle();
+      boardMap.clearSpaces(({ space }) => space.status === 'pre-obstacle');
       boardMap.buildPreObstacle(new Coord(action.x, action.y), action.obstacleDirectionMode, action.playerTurn);
       break;
     case 'BUILD_PRE_MARKER':

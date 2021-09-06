@@ -116,8 +116,6 @@ export class BoardMap {
     }
   }
 
-
-
   private isObstacleConflict(obstacle: Obstacle) {
     const obstacleAsSpaceAry = obstacle.toSpaceAry();
     for (const obstacleBySpace of obstacleAsSpaceAry) {
@@ -128,12 +126,12 @@ export class BoardMap {
     return false;
   }
 
-  public clearPreObstacle() {
+  public clearSpaces(isWillBeCleared: (param: { coord: Coord, space: Space }) => boolean) {
     for (let yI = 0; yI < this.height * 2 - 1; yI++) {
       for (let xI = 0; xI < this.width * 2 - 1; xI++) {
         const { x, y } = { x: xI / 2, y: yI / 2 };
         const coord = new Coord(x, y);
-        if (this.spaces[coord.toKey()].status === 'pre-obstacle') {
+        if (isWillBeCleared({ coord: coord, space: this.spaces[coord.toKey()] })) {
           this.spaces[coord.toKey()] = { coord: coord, status: 'empty', owner: '' };
         }
       }
