@@ -14,7 +14,7 @@ function Marker({ owner, onClickMarker, status }:
         );
       }
     } else {
-      if (owner === 'marker') {
+      if (status === 'marker') {
         return (
           <div style={{ width: "80%", height: "80%", borderRadius: "20%", backgroundColor: "red" }} onClick={() => onClickMarker()}></div>
         );
