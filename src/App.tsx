@@ -6,7 +6,7 @@ function App() {
     <div className="App">
       <div>
         HELLO!
-        <Board width={9} height={9} />
+        <Board width={9} height={9} marker_max={10} />
       </div>
     </div>
   );
