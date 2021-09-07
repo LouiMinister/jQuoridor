@@ -5,6 +5,7 @@ import Cell from "./cell/Cell";
 import { Coord } from "./Coord";
 import Gutter from "./gutter/Gutter";
 import { ObstacleDirection } from './Obstacle';
+import Waiting from './waiting/waiting';
 
 function boardMapReducer(boardMap: BoardMap, action): BoardMap {
   switch (action.type) {
@@ -25,8 +26,8 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
   return _.cloneDeep(boardMap);
 }
 
-function Board({ width, height }:
-  { width: number, height: number }) {
+function Board({ width, height, marker_max }:
+  { width: number, height: number, marker_max: number }) {
 
   const [mouseCoord, setMouseCoord] = useState({ x: 0, y: 0 });
   const [obstacleDirectionMode, setObstacleDirectionMode] = useState('horizontal' as ObstacleDirection)
@@ -64,16 +65,37 @@ function Board({ width, height }:
 
   const boardStyle = useMemo(() => {
     return {
+      justifyContent: "center",
       display: "grid",
       gridTemplateColumns: `64px repeat(${width - 1}, 32px 64px)`,
       gridTemplateRows: `64px repeat(${height - 1}, 32px 64px)`,
     }
   }, [width, height])
 
+  const waitingStyle = useMemo(() => {
+    return {
+      marginBottom: "10px",
+      marginTop: "10px",
+      justifyContent: "center",
+      display: "grid",
+      gridTemplateColumns: `40px repeat(${marker_max - 1}, 45px 40px)`,
+    };
+  }, [marker_max]);
+
   return (
     <>
       <div>
         {`xCoord: ${mouseCoord.x} yCoord: ${mouseCoord.y} payerTurn: ${playerTurn}`}
+      </div>
+      <div style={waitingStyle}>
+        {Array.from({ length: marker_max * 2 - 1 }, (v, i) => i).map((i) => {
+          if (i % 2 === 0) {
+            let waitingkey = `${i}:home`;
+            return <Waiting key={waitingkey}></Waiting>;
+          } else {
+            return <div></div>;
+          }
+        })}
       </div>
       <div style={boardStyle} onContextMenu={(e) => { e.preventDefault(); switchObstacleDirectionMode(); }}>
         {
@@ -85,6 +107,16 @@ function Board({ width, height }:
             }
           })
         }
+      </div>
+      <div style={waitingStyle}>
+        {Array.from({ length: marker_max * 2 - 1 }, (v, i) => i).map((i) => {
+          if (i % 2 === 0) {
+            let waitingkey = `${i}:home`;
+            return <Waiting key={waitingkey}></Waiting>;
+          } else {
+            return <div></div>;
+        }
+        })}
       </div>
     </>
   );
