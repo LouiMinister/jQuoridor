@@ -12,10 +12,16 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
     case 'BUILD_OBSTACLE':
       boardMap.buildObstacle(new Coord(action.x, action.y), action.obstacleDirectionMode, action.playerTurn);
       break;
-    case "BUILD_PRE_OBSTACLE":
+
+    case 'BUILD_PRE_OBSTACLE':
       boardMap.clearPreObstacle();
       boardMap.buildPreObstacle(new Coord(action.x, action.y), action.obstacleDirectionMode, action.playerTurn);
-      console.log('BUILD_PRE_OBSTACLE', action);
+      break;
+    case 'BUILD_PRE_MARKER':
+      boardMap.predictNextMarkerPath(new Coord(action.x, action.y), action.playerTurn);
+      break;
+    case 'MOVE_MARKER':
+      boardMap.moveMarker(new Coord(action.x, action.y), action.playerTurn);
       break;
   }
   return _.cloneDeep(boardMap);
@@ -43,6 +49,14 @@ function Board({width,height,marker_max,}:
     },
     [setMouseCoord]
   );
+
+  const onClickMarker = useCallback(() => {
+    boardMapDispatch({ type: 'BUILD_PRE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn });
+  }, [mouseCoord.x, mouseCoord.y, playerTurn]);
+
+  const onClickPreMarker = useCallback(() => {
+    boardMapDispatch({ type: 'MOVE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn });
+  }, [mouseCoord, playerTurn]);
 
   const switchObstacleDirectionMode = useCallback(() => {
     if (obstacleDirectionMode === "horizontal") {
@@ -90,7 +104,7 @@ function Board({width,height,marker_max,}:
         {
           boardMap.getSpaceToAry(({ coord, space }) => {
             if (Number.isInteger(coord.x) && Number.isInteger(coord.y)) {
-              return <Cell text={coord.toKey()} key={coord.toKey()} onMouseOver={() => onMouseOver(coord)} status={space.status} owner={space.owner} />
+              return <Cell text={coord.toKey()} key={coord.toKey()} onMouseOver={() => onMouseOver(coord)} onClickMarker={() => onClickMarker()} onClickPreMarker={() => { onClickPreMarker() }} status={space.status} owner={space.owner} />
             } else {
               return <Gutter text={coord.toKey()} key={coord.toKey()} onMouseOver={() => onMouseOver(coord)} onClick={() => onClickGutter()} status={space.status} />
             }

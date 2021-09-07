@@ -52,6 +52,13 @@ export class BoardMap {
     this.spaces[key] = space;
   }
 
+  public moveMarker(coord: Coord, owner: string) {
+    this.clearSpaces(({ space }) => {
+      return ((space.status === 'marker' || space.status === 'pre-marker') && space.owner === owner);
+    });
+    this.updateSpace({ coord: coord, status: 'marker', owner: owner });
+  }
+
   public buildObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
     if (!coord.isObstacleCenter()) { return; }
     const obstacle = new Obstacle(coord, direction, 'obstacle', owner);
@@ -72,6 +79,49 @@ export class BoardMap {
     }
   }
 
+  public isSpaceStatus(coord: Coord, status: SpaceStatus) {
+    return this.isInBoard(coord) && this.spaces[coord.toKey()].status === status;
+  }
+
+  public isInBoard(coord: Coord) {
+    return 0 <= coord.x && 0 <= coord.y && coord.x <= this.width - 1 && coord.y <= this.height - 1;
+  }
+
+  public predictNextMarkerPath(coord: Coord, owner: string) { // 로직 정리 필요
+
+    const predictedPath = [new Coord(-1, 0), new Coord(1, 0), new Coord(0, 1), new Coord(0, -1)]
+      .reduce((coordAry: Coord[], delta: Coord) => {
+        let movedCoord = new Coord(coord.x + delta.x, coord.y + delta.y);
+        if (!this.isInBoard(movedCoord) || this.isSpaceStatus(movedCoord.between(coord), 'obstacle')) { return coordAry; } // 보드 범위 밖이거나 장애물로 막힌 경우
+        if (!this.isSpaceStatus(movedCoord, 'marker')) {  // 움직일 곳에 마커가 없는 경우
+          coordAry.push(movedCoord);
+        } else {  // 움직일 곳에 마커가 있는 경우
+          const jumpedCoords = new Coord(movedCoord.x + delta.x, movedCoord.y + delta.y); // 마커 점프
+          if (!this.isInBoard(jumpedCoords) || this.isSpaceStatus(movedCoord.between(jumpedCoords), 'obstacle')) {  // 점프할 곳이 장애물로 막혀있는 경우이거나 보드 밖인경우
+            const jumpedSideCoords: Coord[] = [];
+            if (delta.x === 0) {
+              jumpedSideCoords.push(new Coord(movedCoord.x + 1, movedCoord.y), new Coord(movedCoord.x - 1, movedCoord.y));  // 상대 마커 옆으로 뛰기
+            } else {
+              jumpedSideCoords.push(new Coord(movedCoord.x, movedCoord.y + 1), new Coord(movedCoord.x, movedCoord.y - 1)); // 상대 마커 옆으로 뛰기
+            }
+            coordAry.push(  // 옆으로 뛴것들 중에 장애물이 없거나 보드 안인 경우만 추가
+              ...(jumpedSideCoords.filter((jumpedSideCoord) => {
+                return !this.isSpaceStatus(jumpedCoords.between(jumpedSideCoord), 'obstacle') && this.isInBoard(jumpedSideCoord)
+              }))
+            )
+          } else {  // 점프 할 곳이 막혀있지 않은 경우
+            coordAry.push(jumpedCoords);
+          }
+        }
+        return coordAry;
+      }, [])
+    console.log('predictPath', predictedPath);
+    for (const coord of predictedPath) {
+      const preMarker: Space = { coord: coord, status: 'pre-marker', owner: owner };
+      this.updateSpace(preMarker);
+    }
+  }
+
   private isObstacleConflict(obstacle: Obstacle) {
     const obstacleAsSpaceAry = obstacle.toSpaceAry();
     for (const obstacleBySpace of obstacleAsSpaceAry) {
@@ -82,12 +132,12 @@ export class BoardMap {
     return false;
   }
 
-  public clearPreObstacle() {
+  public clearSpaces(isWillBeCleared: (param: { coord: Coord, space: Space }) => boolean) {
     for (let yI = 0; yI < this.height * 2 - 1; yI++) {
       for (let xI = 0; xI < this.width * 2 - 1; xI++) {
         const { x, y } = { x: xI / 2, y: yI / 2 };
         const coord = new Coord(x, y);
-        if (this.spaces[coord.toKey()].status === 'pre-obstacle') {
+        if (isWillBeCleared({ coord: coord, space: this.spaces[coord.toKey()] })) {
           this.spaces[coord.toKey()] = { coord: coord, status: 'empty', owner: '' };
         }
       }
