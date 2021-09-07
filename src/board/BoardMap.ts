@@ -82,7 +82,6 @@ export class BoardMap {
     for (const obstacleBySpace of obstacleAsSpaceAry) {
       this.updateSpace(obstacleBySpace);
     }
-    this.playerTurnEnd();
   }
 
   public buildPreObstacle(coord: Coord, direction: obstacleDirection, owner: string) {

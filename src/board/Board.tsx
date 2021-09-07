@@ -22,6 +22,9 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
     case 'MOVE_MARKER':
       boardMap.moveMarker(new Coord(action.x, action.y), action.playerTurn);
       break;
+    case 'PLAYER_TURN_END':
+      boardMap.playerTurnEnd();
+      break;
   }
   return _.cloneDeep(boardMap);
 }
@@ -40,6 +43,7 @@ function Board({ width, height }:
 
   const onClickGutter = useCallback(() => {
     boardMapDispatch({ type: 'BUILD_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn });
+    boardMapDispatch({ type: 'PLAYER_TURN_END' });
   }, [mouseCoord, obstacleDirectionMode, playerTurn]);
 
   const onMouseOver = useCallback((coord) => {
@@ -53,6 +57,7 @@ function Board({ width, height }:
 
   const onClickPreMarker = useCallback(() => {
     boardMapDispatch({ type: 'MOVE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn });
+    boardMapDispatch({ type: 'PLAYER_TURN_END' });
   }, [mouseCoord, playerTurn]);
 
   const switchObstacleDirectionMode = useCallback(() => {
