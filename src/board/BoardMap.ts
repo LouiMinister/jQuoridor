@@ -98,12 +98,16 @@ export class BoardMap {
     return this.isInBoard(coord) && this.spaces[coord.toKey()].status === status;
   }
 
+  public isSpaceOwner(coord: Coord, owner: string) {
+    return this.isInBoard(coord) && this.spaces[coord.toKey()].owner === owner;
+  }
+
   public isInBoard(coord: Coord) {
     return 0 <= coord.x && 0 <= coord.y && coord.x <= this.width - 1 && coord.y <= this.height - 1;
   }
 
   public predictNextMarkerPath(coord: Coord, owner: string) { // 로직 정리 필요
-
+    if (this.spaces[coord.toKey()].owner !== owner) { return; }
     const predictedPath = [new Coord(-1, 0), new Coord(1, 0), new Coord(0, 1), new Coord(0, -1)]
       .reduce((coordAry: Coord[], delta: Coord) => {
         let movedCoord = new Coord(coord.x + delta.x, coord.y + delta.y);
