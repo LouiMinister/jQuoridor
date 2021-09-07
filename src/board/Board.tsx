@@ -9,6 +9,7 @@ import { ObstacleDirection } from './Obstacle';
 function boardMapReducer(boardMap: BoardMap, action): BoardMap {
   switch (action.type) {
     case 'BUILD_OBSTACLE':
+      boardMap.clearSpaces(({ space }) => space.status === 'pre-marker');
       boardMap.buildObstacle(new Coord(action.x, action.y), action.obstacleDirectionMode, action.playerTurn);
       break;
     case 'BUILD_PRE_OBSTACLE':
@@ -31,7 +32,7 @@ function Board({ width, height }:
   const [mouseCoord, setMouseCoord] = useState({ x: 0, y: 0 });
   const [obstacleDirectionMode, setObstacleDirectionMode] = useState('horizontal' as ObstacleDirection)
   const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height));
-  const [playerTurn, setPlayerTurn] = useState('home');
+  const playerTurn = useMemo(() => boardMap.getPlayerTurn(), [boardMap]);
 
   useEffect(() => {
     boardMapDispatch({ type: 'BUILD_PRE_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn });

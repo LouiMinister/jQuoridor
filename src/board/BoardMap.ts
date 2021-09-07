@@ -7,12 +7,14 @@ export type Spaces = { [key: CoordKey]: Space }; // key: ${number}:${number}
 export type obstacleDirection = 'horizontal' | 'vertical';
 
 export class BoardMap {
-  width: number = 0;
-  height: number = 0;
-  spaces: Spaces = {};
+  private width: number = 0;
+  private height: number = 0;
+  private spaces: Spaces = {};
+  private playerTurn: 'home' | 'away';
   constructor(width: number, height: number) {
     this.width = width;
     this.height = height;
+    this.playerTurn = 'home';
     this.init();
   }
 
@@ -30,6 +32,19 @@ export class BoardMap {
     spaces[`${4}:${8}`] = { ...spaces[`${4}:${8}`], status: 'marker', owner: 'home' };
 
     this.spaces = spaces;
+  }
+
+  public getPlayerTurn(): string {
+    return this.playerTurn || 'home';
+  }
+
+  public playerTurnEnd() {
+    console.log('playerTurnEnd', this.playerTurn, this.playerTurn === 'home');
+    if (this.playerTurn === 'home') {
+      this.playerTurn = 'away';
+    } else if (this.playerTurn === 'away') {
+      this.playerTurn = 'home';
+    }
   }
 
   public getSpaceToAry<T>(callbackFn: (param: { coord: Coord, space: Space }) => T): T[][] {
@@ -67,6 +82,7 @@ export class BoardMap {
     for (const obstacleBySpace of obstacleAsSpaceAry) {
       this.updateSpace(obstacleBySpace);
     }
+    this.playerTurnEnd();
   }
 
   public buildPreObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
