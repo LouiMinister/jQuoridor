@@ -119,9 +119,10 @@ export class BoardMap {
             } else {
               jumpedSideCoords.push(new Coord(movedCoord.x, movedCoord.y + 1), new Coord(movedCoord.x, movedCoord.y - 1)); // 상대 마커 옆으로 뛰기
             }
+            console.log('jumpedSideCoords', jumpedSideCoords);
             coordAry.push(  // 옆으로 뛴것들 중에 장애물이 없거나 보드 안인 경우만 추가
               ...(jumpedSideCoords.filter((jumpedSideCoord) => {
-                return !this.isSpaceStatus(jumpedCoords.between(jumpedSideCoord), 'obstacle') && this.isInBoard(jumpedSideCoord)
+                return !this.isSpaceStatus(movedCoord.between(jumpedSideCoord), 'obstacle') && this.isInBoard(jumpedSideCoord)
               }))
             )
           } else {  // 점프 할 곳이 막혀있지 않은 경우
