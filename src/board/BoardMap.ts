@@ -44,7 +44,7 @@ export class BoardMap {
     return this.playerWaiting;
   }
 
-  public playerTurnEnd() {
+  private playerTurnEnd() {
     console.log('playerTurnEnd', this.playerTurn, this.playerTurn === 'home');
     if (this.playerTurn === 'home') {
       this.playerTurn = 'away';
@@ -90,6 +90,7 @@ export class BoardMap {
       this.updateSpace(obstacleBySpace);
     }
     this.reduceWaiting();
+    this.playerTurnEnd();
   }
 
   public buildPreObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
@@ -150,6 +151,7 @@ export class BoardMap {
       const preMarker: Space = { coord: coord, status: 'pre-marker', owner: owner };
       this.updateSpace(preMarker);
     }
+    this.playerTurnEnd();
   }
 
   private isObstacleConflict(obstacle: Obstacle) {
