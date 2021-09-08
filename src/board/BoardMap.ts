@@ -1,3 +1,4 @@
+import Board from './Board';
 import { Coord, CoordKey } from './Coord';
 import { Obstacle } from './Obstacle';
 
@@ -11,11 +12,13 @@ export class BoardMap {
   private height: number = 0;
   private spaces: Spaces = {};
   private playerTurn: 'home' | 'away';
-  constructor(width: number, height: number) {
+  private playerWaiting: {};
+  constructor(width: number, height: number, waiting_max:number) {
     this.width = width;
     this.height = height;
     this.playerTurn = 'home';
     this.init();
+    this.playerWaiting = {'home' : waiting_max, 'away': waiting_max};
   }
 
   private init() {
@@ -36,6 +39,10 @@ export class BoardMap {
 
   public getPlayerTurn(): string {
     return this.playerTurn || 'home';
+  }
+
+  public getPlayerWaiting(): object {
+    return this.playerWaiting;
   }
 
   public playerTurnEnd() {
@@ -82,6 +89,7 @@ export class BoardMap {
     for (const obstacleBySpace of obstacleAsSpaceAry) {
       this.updateSpace(obstacleBySpace);
     }
+    this.reduceWaiting();
   }
 
   public buildPreObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
@@ -92,6 +100,7 @@ export class BoardMap {
     for (const obstacleBySpace of obstacleAsSpaceAry) {
       this.updateSpace(obstacleBySpace);
     }
+
   }
 
   public isSpaceStatus(coord: Coord, status: SpaceStatus) {
@@ -164,5 +173,9 @@ export class BoardMap {
     }
   }
 
+  private reduceWaiting(){
+    this.playerWaiting[this.playerTurn] -= 1;
+    return;
+  }
 }
 
