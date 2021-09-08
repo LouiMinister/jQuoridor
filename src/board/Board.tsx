@@ -73,13 +73,9 @@ function Board({ width, height, waiting_max }:
   const renderWaitings = ((player) => {
     
     {return <div style={waitingStyle}>
-        {Array.from({ length: playerWaiting[player] * 2 - 1 }, (v, i) => i).map((i) => {
-          if (i % 2 === 0) {
-            let waitingkey = `${i}:${player}`;
-            return <Waiting key={waitingkey}></Waiting>;
-          } else {
-            return <div></div>;
-          }
+        {Array.from({ length: playerWaiting[player]}, (v, i) => i).map((i) => {
+          let waitingkey = `${i}:${player}`;
+          return <Waiting key={waitingkey}></Waiting>;
         })}
       </div>
       }
@@ -96,11 +92,13 @@ function Board({ width, height, waiting_max }:
 
   const waitingStyle = useMemo(() => {
     return {
+      height: "120px",
       marginBottom: "10px",
       marginTop: "10px",
       justifyContent: "center",
       display: "grid",
-      gridTemplateColumns: `40px repeat(${waiting_max - 1}, 45px 40px)`,
+      columnGap: "40px",
+      gridTemplateColumns: `repeat(${waiting_max}, 40px)`,
     };
   }, [waiting_max]);
 

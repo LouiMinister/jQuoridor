@@ -4,7 +4,6 @@ function Waiting() {
     return (
       <div
         style={{
-          height: "120px",
           borderRadius: "10%",
           backgroundColor: "#82755b",
           borderWidth: "2px",

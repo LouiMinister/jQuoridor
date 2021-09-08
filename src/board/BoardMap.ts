@@ -1,4 +1,3 @@
-import Board from './Board';
 import { Coord, CoordKey } from './Coord';
 import { Obstacle } from './Obstacle';
 
@@ -82,6 +81,7 @@ export class BoardMap {
   }
 
   public buildObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
+    if (this.playerWaiting[this.playerTurn] <= 0) { return; }
     if (!coord.isObstacleCenter()) { return; }
     const obstacle = new Obstacle(coord, direction, 'obstacle', owner);
     if (this.isObstacleConflict(obstacle)) { return; }
@@ -93,6 +93,7 @@ export class BoardMap {
   }
 
   public buildPreObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
+    if (this.playerWaiting[this.playerTurn] <= 0) { return; }
     if (!coord.isObstacleCenter()) { return; }
     const obstacle = new Obstacle(coord, direction, 'pre-obstacle', owner);
     if (this.isObstacleConflict(obstacle)) { return; }
