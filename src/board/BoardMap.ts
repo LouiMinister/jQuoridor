@@ -82,7 +82,7 @@ export class BoardMap {
   }
 
   public buildObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
-    function reduceWaiting(platerLeftObstacle, playerTurn){
+    function decreaseLeftObstacle(platerLeftObstacle, playerTurn){
       platerLeftObstacle[playerTurn] -= 1;
       return;
     }
@@ -96,7 +96,7 @@ export class BoardMap {
       this.updateSpace(obstacleBySpace);
     }
 
-    reduceWaiting(this.platerLeftObstacle, this.playerTurn);
+    decreaseLeftObstacle(this.platerLeftObstacle, this.playerTurn);
     this.playerTurnEnd();
   }
 
