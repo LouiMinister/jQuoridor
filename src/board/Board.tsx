@@ -5,7 +5,7 @@ import Cell from "./cell/Cell";
 import { Coord } from "./Coord";
 import Gutter from "./gutter/Gutter";
 import { ObstacleDirection } from './Obstacle';
-import Waiting from './waiting/waiting';
+import LeftObstacle from './leftObstacle/LeftObstacle';
 
 function boardMapReducer(boardMap: BoardMap, action): BoardMap {
   switch (action.type) {
@@ -28,14 +28,14 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
   return _.cloneDeep(boardMap);
 }
 
-function Board({ width, height, waiting_max }:
-  { width: number, height: number, waiting_max: number }) {
+function Board({ width, height, obstacleMax: ObstacleMax }:
+  { width: number, height: number, obstacleMax: number }) {
 
   const [mouseCoord, setMouseCoord] = useState({ x: 0, y: 0 });
   const [obstacleDirectionMode, setObstacleDirectionMode] = useState('horizontal' as ObstacleDirection)
-  const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height, waiting_max));
+  const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height, ObstacleMax));
   const playerTurn = useMemo(() => boardMap.getPlayerTurn(), [boardMap]);
-  const playerWaiting = useMemo(() => boardMap.getPlayerWaiting(), [boardMap]);
+  const playerWaiting = useMemo(() => boardMap.getPlayerLeftObstacle(), [boardMap]);
 
   useEffect(() => {
     boardMapDispatch({ type: 'BUILD_PRE_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn });
@@ -67,12 +67,12 @@ function Board({ width, height, waiting_max }:
     }
   }, [obstacleDirectionMode])
 
-  const renderWaitings = ((player) => {
+  const renderLeftObstacles = ((player) => {
     
-    {return <div style={waitingStyle}>
+    {return <div style={leftObstacleStyle}>
         {Array.from({ length: playerWaiting[player]}, (v, i) => i).map((i) => {
-          let waitingkey = `${i}:${player}`;
-          return <Waiting key={waitingkey}></Waiting>;
+          let leftObstacleKey = `${i}:${player}`;
+          return <LeftObstacle key={leftObstacleKey}></LeftObstacle>;
         })}
       </div>
       }
@@ -87,7 +87,7 @@ function Board({ width, height, waiting_max }:
     }
   }, [width, height])
 
-  const waitingStyle = useMemo(() => {
+  const leftObstacleStyle = useMemo(() => {
     return {
       height: "120px",
       marginBottom: "10px",
@@ -95,16 +95,16 @@ function Board({ width, height, waiting_max }:
       justifyContent: "center",
       display: "grid",
       columnGap: "40px",
-      gridTemplateColumns: `repeat(${waiting_max}, 40px)`,
+      gridTemplateColumns: `repeat(${ObstacleMax}, 40px)`,
     };
-  }, [waiting_max]);
+  }, [ObstacleMax]);
 
   return (
     <>
       <div>
         {`xCoord: ${mouseCoord.x} yCoord: ${mouseCoord.y} payerTurn: ${playerTurn}`}
       </div>
-      { renderWaitings('away') }
+      { renderLeftObstacles('away') }
       <div style={boardStyle} onContextMenu={(e) => { e.preventDefault(); switchObstacleDirectionMode(); }}>
         {
           boardMap.getSpaceToAry(({ coord, space }) => {
@@ -116,7 +116,7 @@ function Board({ width, height, waiting_max }:
           })
         }
       </div>
-      { renderWaitings('home') }
+      { renderLeftObstacles('home') }
     </>
   );
 }

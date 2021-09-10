@@ -1,5 +1,5 @@
-function Waiting() {
-  const renderWaiting = () => {
+function LeftObstacle() {
+  const renderLeftObstacle = () => {
     // 보드 크기 832x832
     return (
       <div
@@ -13,7 +13,7 @@ function Waiting() {
     );
   };
 
-  return <>{renderWaiting()}</>;
+  return <>{renderLeftObstacle()}</>;
 }
 
-export default Waiting;
+export default LeftObstacle;
