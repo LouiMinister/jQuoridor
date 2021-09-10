@@ -5,6 +5,7 @@ import Cell from "./cell/Cell";
 import { Coord } from "./Coord";
 import Gutter from "./gutter/Gutter";
 import { ObstacleDirection } from './Obstacle';
+import LeftObstacle from './leftObstacle/LeftObstacle';
 
 function boardMapReducer(boardMap: BoardMap, action): BoardMap {
   switch (action.type) {
@@ -21,21 +22,20 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
       break;
     case 'MOVE_MARKER':
       boardMap.moveMarker(new Coord(action.x, action.y), action.playerTurn);
-      break;
-    case 'PLAYER_TURN_END':
-      boardMap.playerTurnEnd();
+      action.type = ''
       break;
   }
   return _.cloneDeep(boardMap);
 }
 
-function Board({ width, height }:
-  { width: number, height: number }) {
+function Board({ width, height, obstacleMax: ObstacleMax }:
+  { width: number, height: number, obstacleMax: number }) {
 
   const [mouseCoord, setMouseCoord] = useState({ x: 0, y: 0 });
   const [obstacleDirectionMode, setObstacleDirectionMode] = useState('horizontal' as ObstacleDirection)
-  const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height));
+  const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height, ObstacleMax));
   const playerTurn = useMemo(() => boardMap.getPlayerTurn(), [boardMap]);
+  const playerLeftObstacle = useMemo(() => boardMap.getPlayerLeftObstacle(), [boardMap]);
 
   useEffect(() => {
     boardMapDispatch({ type: 'BUILD_PRE_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn });
@@ -43,7 +43,6 @@ function Board({ width, height }:
 
   const onClickGutter = useCallback(() => {
     boardMapDispatch({ type: 'BUILD_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn });
-    boardMapDispatch({ type: 'PLAYER_TURN_END' });
   }, [mouseCoord, obstacleDirectionMode, playerTurn]);
 
   const onMouseOver = useCallback((coord) => {
@@ -68,19 +67,44 @@ function Board({ width, height }:
     }
   }, [obstacleDirectionMode])
 
+  const renderLeftObstacles = ((player) => {
+    
+    {return <div style={leftObstacleWrapper}>
+        {Array.from({ length: playerLeftObstacle[player]}, (v, i) => i).map((i) => {
+          let leftObstacleKey = `${i}:${player}`;
+          return <LeftObstacle key={leftObstacleKey}></LeftObstacle>;
+        })}
+      </div>
+      }
+  })
+
   const boardStyle = useMemo(() => {
     return {
+      justifyContent: "center",
       display: "grid",
       gridTemplateColumns: `64px repeat(${width - 1}, 32px 64px)`,
       gridTemplateRows: `64px repeat(${height - 1}, 32px 64px)`,
     }
   }, [width, height])
 
+  const leftObstacleWrapper = useMemo(() => {
+    return {
+      height: "120px",
+      marginBottom: "10px",
+      marginTop: "10px",
+      justifyContent: "center",
+      display: "grid",
+      columnGap: "40px",
+      gridTemplateColumns: `repeat(${ObstacleMax}, 40px)`,
+    };
+  }, [ObstacleMax]);
+
   return (
     <>
       <div>
         {`xCoord: ${mouseCoord.x} yCoord: ${mouseCoord.y} payerTurn: ${playerTurn}`}
       </div>
+      { renderLeftObstacles('away') }
       <div style={boardStyle} onContextMenu={(e) => { e.preventDefault(); switchObstacleDirectionMode(); }}>
         {
           boardMap.getSpaceToAry(({ coord, space }) => {
@@ -92,6 +116,7 @@ function Board({ width, height }:
           })
         }
       </div>
+      { renderLeftObstacles('home') }
     </>
   );
 }
