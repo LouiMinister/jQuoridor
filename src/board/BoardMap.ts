@@ -11,11 +11,13 @@ export class BoardMap {
   private height: number = 0;
   private spaces: Spaces = {};
   private playerTurn: 'home' | 'away';
-  constructor(width: number, height: number) {
+  private platerLeftObstacle: {'home' : number, 'away': number};
+  constructor(width: number, height: number, obstacleMax:number) {
     this.width = width;
     this.height = height;
     this.playerTurn = 'home';
     this.init();
+    this.platerLeftObstacle = {'home' : obstacleMax, 'away': obstacleMax};
   }
 
   private init() {
@@ -38,7 +40,11 @@ export class BoardMap {
     return this.playerTurn || 'home';
   }
 
-  public playerTurnEnd() {
+  public getPlayerLeftObstacle(): {'home' : number, 'away': number} {
+    return this.platerLeftObstacle;
+  }
+
+  private playerTurnEnd() {
     console.log('playerTurnEnd', this.playerTurn, this.playerTurn === 'home');
     if (this.playerTurn === 'home') {
       this.playerTurn = 'away';
@@ -72,9 +78,16 @@ export class BoardMap {
       return ((space.status === 'marker' || space.status === 'pre-marker') && space.owner === owner);
     });
     this.updateSpace({ coord: coord, status: 'marker', owner: owner });
+    this.playerTurnEnd();
   }
 
   public buildObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
+    function reduceWaiting(platerLeftObstacle, playerTurn){
+      platerLeftObstacle[playerTurn] -= 1;
+      return;
+    }
+
+    if (this.platerLeftObstacle[this.playerTurn] <= 0) { return; }
     if (!coord.isObstacleCenter()) { return; }
     const obstacle = new Obstacle(coord, direction, 'obstacle', owner);
     if (this.isObstacleConflict(obstacle)) { return; }
@@ -82,9 +95,13 @@ export class BoardMap {
     for (const obstacleBySpace of obstacleAsSpaceAry) {
       this.updateSpace(obstacleBySpace);
     }
+
+    reduceWaiting(this.platerLeftObstacle, this.playerTurn);
+    this.playerTurnEnd();
   }
 
   public buildPreObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
+    if (this.platerLeftObstacle[this.playerTurn] <= 0) { return; }
     if (!coord.isObstacleCenter()) { return; }
     const obstacle = new Obstacle(coord, direction, 'pre-obstacle', owner);
     if (this.isObstacleConflict(obstacle)) { return; }
@@ -92,6 +109,7 @@ export class BoardMap {
     for (const obstacleBySpace of obstacleAsSpaceAry) {
       this.updateSpace(obstacleBySpace);
     }
+
   }
 
   public isSpaceStatus(coord: Coord, status: SpaceStatus) {
@@ -163,6 +181,7 @@ export class BoardMap {
       }
     }
   }
+
 
 }
 
