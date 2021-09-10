@@ -22,6 +22,7 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
       break;
     case 'MOVE_MARKER':
       boardMap.moveMarker(new Coord(action.x, action.y), action.playerTurn);
+      action.type = ''
       break;
   }
   return _.cloneDeep(boardMap);

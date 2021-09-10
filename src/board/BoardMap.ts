@@ -78,6 +78,7 @@ export class BoardMap {
       return ((space.status === 'marker' || space.status === 'pre-marker') && space.owner === owner);
     });
     this.updateSpace({ coord: coord, status: 'marker', owner: owner });
+    this.playerTurnEnd();
   }
 
   public buildObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
@@ -151,7 +152,6 @@ export class BoardMap {
       const preMarker: Space = { coord: coord, status: 'pre-marker', owner: owner };
       this.updateSpace(preMarker);
     }
-    this.playerTurnEnd();
   }
 
   private isObstacleConflict(obstacle: Obstacle) {
