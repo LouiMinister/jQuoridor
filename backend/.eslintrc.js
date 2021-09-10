@@ -1,4 +1,5 @@
 module.exports = {
+  files: ['*.ts', '*.tsx'], // Your TypeScript files extension
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: 'tsconfig.json',
