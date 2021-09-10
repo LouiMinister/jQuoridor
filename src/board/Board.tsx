@@ -35,7 +35,7 @@ function Board({ width, height, obstacleMax: ObstacleMax }:
   const [obstacleDirectionMode, setObstacleDirectionMode] = useState('horizontal' as ObstacleDirection)
   const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height, ObstacleMax));
   const playerTurn = useMemo(() => boardMap.getPlayerTurn(), [boardMap]);
-  const playerWaiting = useMemo(() => boardMap.getPlayerLeftObstacle(), [boardMap]);
+  const playerLeftObstacle = useMemo(() => boardMap.getPlayerLeftObstacle(), [boardMap]);
 
   useEffect(() => {
     boardMapDispatch({ type: 'BUILD_PRE_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn });
@@ -69,8 +69,8 @@ function Board({ width, height, obstacleMax: ObstacleMax }:
 
   const renderLeftObstacles = ((player) => {
     
-    {return <div style={leftObstacleStyle}>
-        {Array.from({ length: playerWaiting[player]}, (v, i) => i).map((i) => {
+    {return <div style={leftObstacleWrapper}>
+        {Array.from({ length: playerLeftObstacle[player]}, (v, i) => i).map((i) => {
           let leftObstacleKey = `${i}:${player}`;
           return <LeftObstacle key={leftObstacleKey}></LeftObstacle>;
         })}
@@ -87,7 +87,7 @@ function Board({ width, height, obstacleMax: ObstacleMax }:
     }
   }, [width, height])
 
-  const leftObstacleStyle = useMemo(() => {
+  const leftObstacleWrapper = useMemo(() => {
     return {
       height: "120px",
       marginBottom: "10px",
