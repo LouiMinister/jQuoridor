@@ -1,12 +1,12 @@
 import './App.css';
-import Board from './board/Board';
+import Board from './InGame/board/Board';
+import InGame from './InGame/InGame';
 
 function App() {
   return (
     <div className="App">
       <div>
-        HELLO!
-        <Board width={9} height={9} obstacleMax={10} />
+        <InGame></InGame>
       </div>
     </div>
   );

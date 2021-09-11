@@ -1,6 +1,6 @@
 
 import Marker from '../marker/Marker';
-import { SpaceStatus } from './../BoardMap';
+import { SpaceStatus } from '../BoardMap';
 
 function Cell({ text, onMouseOver, onClickMarker, onClickPreMarker, status, owner }:
   { text: string, onMouseOver: () => void, onClickMarker: () => void, onClickPreMarker: () => void, status: SpaceStatus, owner: string }) {
