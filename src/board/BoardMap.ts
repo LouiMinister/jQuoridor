@@ -12,12 +12,12 @@ export class BoardMap {
   private spaces: Spaces = {};
   private playerTurn: 'home' | 'away';
   private platerLeftObstacle: {'home' : number, 'away': number};
-  constructor(width: number, height: number, obstacleMax:number) {
+  constructor(width: number, height: number, MaxObstacle:number) {
     this.width = width;
     this.height = height;
     this.playerTurn = 'home';
     this.init();
-    this.platerLeftObstacle = {'home' : obstacleMax, 'away': obstacleMax};
+    this.platerLeftObstacle = {'home' : MaxObstacle, 'away': MaxObstacle};
   }
 
   private init() {

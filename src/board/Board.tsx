@@ -28,12 +28,12 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
   return _.cloneDeep(boardMap);
 }
 
-function Board({ width, height, MaxObstacle: ObstacleMax }:
+function Board({ width, height, MaxObstacle }:
   { width: number, height: number, MaxObstacle: number }) {
 
   const [mouseCoord, setMouseCoord] = useState({ x: 0, y: 0 });
   const [obstacleDirectionMode, setObstacleDirectionMode] = useState('horizontal' as ObstacleDirection)
-  const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height, ObstacleMax));
+  const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height, MaxObstacle));
   const playerTurn = useMemo(() => boardMap.getPlayerTurn(), [boardMap]);
   const playerLeftObstacle = useMemo(() => boardMap.getPlayerLeftObstacle(), [boardMap]);
 
@@ -95,9 +95,9 @@ function Board({ width, height, MaxObstacle: ObstacleMax }:
       justifyContent: "center",
       display: "grid",
       columnGap: "40px",
-      gridTemplateColumns: `repeat(${ObstacleMax}, 40px)`,
+      gridTemplateColumns: `repeat(${MaxObstacle}, 40px)`,
     };
-  }, [ObstacleMax]);
+  }, [MaxObstacle]);
 
   return (
     <>
