@@ -25,7 +25,7 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
       action.type = ''
       break;
     case 'RESET_BOARD':
-      boardMap.resetBoard();
+      boardMap.resetBoard(action.MaxObstacle);
       break;
   }
   return _.cloneDeep(boardMap);
@@ -63,8 +63,8 @@ function Board({ width, height, MaxObstacle }:
   }, [mouseCoord, playerTurn]);
 
   const onClickResetButton = useCallback(() => {
-    boardMapDispatch({ type: 'RESET_BOARD' });
-  }, []);
+    boardMapDispatch({ type: 'RESET_BOARD', MaxObstacle:MaxObstacle });
+  }, [MaxObstacle]);
 
 
   const switchObstacleDirectionMode = useCallback(() => {

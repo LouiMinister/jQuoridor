@@ -182,10 +182,10 @@ export class BoardMap {
     }
   }
 
-  public resetBoard(){
+  public resetBoard(MaxObstacle){
     this.playerTurn = 'home';
     this.init();
-    this.playerLeftObstacle = {'home' : 10, 'away': 10};
+    this.playerLeftObstacle = {'home' : MaxObstacle, 'away': MaxObstacle};
   }
 
 }
