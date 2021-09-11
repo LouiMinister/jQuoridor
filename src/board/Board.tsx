@@ -28,8 +28,8 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
   return _.cloneDeep(boardMap);
 }
 
-function Board({ width, height, obstacleMax: ObstacleMax }:
-  { width: number, height: number, obstacleMax: number }) {
+function Board({ width, height, MaxObstacle: ObstacleMax }:
+  { width: number, height: number, MaxObstacle: number }) {
 
   const [mouseCoord, setMouseCoord] = useState({ x: 0, y: 0 });
   const [obstacleDirectionMode, setObstacleDirectionMode] = useState('horizontal' as ObstacleDirection)
@@ -69,13 +69,13 @@ function Board({ width, height, obstacleMax: ObstacleMax }:
 
   const renderLeftObstacles = ((player) => {
     
-    {return <div style={leftObstacleWrapper}>
+    return <div style={leftObstacleWrapper}>
         {Array.from({ length: playerLeftObstacle[player]}, (v, i) => i).map((i) => {
           let leftObstacleKey = `${i}:${player}`;
           return <LeftObstacle key={leftObstacleKey}></LeftObstacle>;
         })}
       </div>
-      }
+      
   })
 
   const boardStyle = useMemo(() => {
