@@ -1,5 +1,5 @@
 
-import { SpaceStatus } from './../BoardMap';
+import { SpaceStatus } from '../BoardMap';
 
 function Gutter({ text, onMouseOver, onClick, status }:
   { text: string, onMouseOver: () => void, onClick: () => void, status: SpaceStatus }) {
