@@ -24,6 +24,9 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
       boardMap.moveMarker(new Coord(action.x, action.y), action.playerTurn);
       action.type = ''
       break;
+    case 'RESET_BOARD':
+      boardMap.resetBoard();
+      break;
   }
   return _.cloneDeep(boardMap);
 }
@@ -59,6 +62,11 @@ function Board({ width, height, MaxObstacle }:
     boardMapDispatch({ type: 'PLAYER_TURN_END' });
   }, [mouseCoord, playerTurn]);
 
+  const onClickResetButton = useCallback(() => {
+    boardMapDispatch({ type: 'RESET_BOARD' });
+  }, []);
+
+
   const switchObstacleDirectionMode = useCallback(() => {
     if (obstacleDirectionMode === 'horizontal') {
       setObstacleDirectionMode('vertical');
@@ -68,14 +76,12 @@ function Board({ width, height, MaxObstacle }:
   }, [obstacleDirectionMode])
 
   const renderLeftObstacles = ((player) => {
-    
     return <div style={leftObstacleWrapper}>
         {Array.from({ length: playerLeftObstacle[player]}, (v, i) => i).map((i) => {
           let leftObstacleKey = `${i}:${player}`;
           return <LeftObstacle key={leftObstacleKey}></LeftObstacle>;
         })}
       </div>
-      
   })
 
   const boardStyle = useMemo(() => {
@@ -104,6 +110,7 @@ function Board({ width, height, MaxObstacle }:
       <div>
         {`xCoord: ${mouseCoord.x} yCoord: ${mouseCoord.y} payerTurn: ${playerTurn}`}
       </div>
+      <button onClick={() => onClickResetButton()}>RESET</button>
       { renderLeftObstacles('away') }
       <div style={boardStyle} onContextMenu={(e) => { e.preventDefault(); switchObstacleDirectionMode(); }}>
         {
