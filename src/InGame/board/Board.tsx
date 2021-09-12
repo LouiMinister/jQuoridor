@@ -70,7 +70,6 @@ function Board({ width, height, maxObstacle }:
     boardMapDispatch({ type: 'RESET_BOARD', maxObstacle });
   }, [maxObstacle]);
 
-
   const switchObstacleDirectionMode = useCallback(() => {
     if (obstacleDirectionMode === 'horizontal') {
       setObstacleDirectionMode('vertical');
