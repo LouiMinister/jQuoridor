@@ -1,4 +1,4 @@
-import _ from 'lodash';
+// import _ from 'lodash';
 import { useState } from 'react';
 import Modal from 'react-modal';
 import useInput from 'src/hooks/useInput';
@@ -47,7 +47,7 @@ function InGame() {
           </div>
           <button onClick={() => onSubmit()}>submit</button>
         </Modal>
-        <Board width={9} height={9} obstacleMax={10} />
+        <Board width={9} height={9} maxObstacle={10} />
       </div>
     </>
   );
