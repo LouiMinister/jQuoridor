@@ -11,14 +11,14 @@ export class BoardMap {
   private height: number = 0;
   private spaces: Spaces = {};
   private playerTurn: 'home' | 'away';
-  private platerLeftObstacle: {'home' : number, 'away': number};
+  private playerLeftObstacle: {'home' : number, 'away': number};
   private gameWinner: 'home' | 'away' | '';
   constructor(width: number, height: number, maxObstacle:number) {
     this.width = width;
     this.height = height;
     this.playerTurn = 'home';
     this.init();
-    this.platerLeftObstacle = {'home' : maxObstacle, 'away': maxObstacle};
+    this.playerLeftObstacle = {'home' : maxObstacle, 'away': maxObstacle};
     this.gameWinner = '';
   }
 
@@ -43,7 +43,7 @@ export class BoardMap {
   }
 
   public getPlayerLeftObstacle(): {'home' : number, 'away': number} {
-    return this.platerLeftObstacle;
+    return this.playerLeftObstacle;
   }
 
   public getGameWinner(): 'home' | 'away' | '' {
@@ -115,7 +115,7 @@ export class BoardMap {
       return;
     }
     
-    if (this.platerLeftObstacle[this.playerTurn] <= 0) { return; }
+    if (this.playerLeftObstacle[this.playerTurn] <= 0) { return; }
     if (!coord.isObstacleCenter()) { return; }
     const obstacle = new Obstacle(coord, direction, 'obstacle', owner);
     if (this.isObstacleConflict(obstacle)) { return; }
@@ -124,12 +124,12 @@ export class BoardMap {
       this.updateSpace(obstacleBySpace);
     }
 
-    decreaseLeftObstacle(this.platerLeftObstacle, this.playerTurn);
+    decreaseLeftObstacle(this.playerLeftObstacle, this.playerTurn);
     this.playerTurnEnd();
   }
 
   public buildPreObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
-    if (this.platerLeftObstacle[this.playerTurn] <= 0) { return; }
+    if (this.playerLeftObstacle[this.playerTurn] <= 0) { return; }
     if (!coord.isObstacleCenter()) { return; }
     const obstacle = new Obstacle(coord, direction, 'pre-obstacle', owner);
     if (this.isObstacleConflict(obstacle)) { return; }
@@ -226,5 +226,12 @@ export class BoardMap {
       } 
     })
   }
+  
+  public resetBoard(MaxObstacle){
+    this.playerTurn = 'home';
+    this.init();
+    this.playerLeftObstacle = {'home' : MaxObstacle, 'away': MaxObstacle};
+  }
+
 }
 
