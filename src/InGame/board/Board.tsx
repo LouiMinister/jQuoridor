@@ -10,17 +10,21 @@ import LeftObstacle from './leftObstacle/LeftObstacle';
 function boardMapReducer(boardMap: BoardMap, action): BoardMap {
   switch (action.type) {
     case 'BUILD_OBSTACLE':
+      if (action.gameWinner) break; // 게임 끝났을 때, 행동 불가
       boardMap.clearSpaces(({ space }) => space.status === 'pre-marker');
       boardMap.buildObstacle(new Coord(action.x, action.y), action.obstacleDirectionMode, action.playerTurn);
       break;
     case 'BUILD_PRE_OBSTACLE':
+      if (action.gameWinner) break;
       boardMap.clearSpaces(({ space }) => space.status === 'pre-obstacle');
       boardMap.buildPreObstacle(new Coord(action.x, action.y), action.obstacleDirectionMode, action.playerTurn);
       break;
     case 'BUILD_PRE_MARKER':
+      if (action.gameWinner) break;
       boardMap.predictNextMarkerPath(new Coord(action.x, action.y), action.playerTurn);
       break;
     case 'MOVE_MARKER':
+      if (action.gameWinner) break;
       boardMap.moveMarker(new Coord(action.x, action.y), action.playerTurn);
       action.type = ''
       break;
@@ -36,14 +40,15 @@ function Board({ width, height, obstacleMax: ObstacleMax }:
   const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height, ObstacleMax));
   const playerTurn = useMemo(() => boardMap.getPlayerTurn(), [boardMap]);
   const playerLeftObstacle = useMemo(() => boardMap.getPlayerLeftObstacle(), [boardMap]);
+  const gameWinner = useMemo(() => boardMap.getGameWinner(), [boardMap]);
 
   useEffect(() => {
-    boardMapDispatch({ type: 'BUILD_PRE_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn });
-  }, [mouseCoord, obstacleDirectionMode, playerTurn])
+    boardMapDispatch({ type: 'BUILD_PRE_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn, gameWinner});
+  }, [mouseCoord, obstacleDirectionMode, playerTurn, gameWinner])
 
   const onClickGutter = useCallback(() => {
-    boardMapDispatch({ type: 'BUILD_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn });
-  }, [mouseCoord, obstacleDirectionMode, playerTurn]);
+    boardMapDispatch({ type: 'BUILD_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn, gameWinner });
+  }, [mouseCoord, obstacleDirectionMode, playerTurn, gameWinner]);
 
   const onMouseOver = useCallback((coord) => {
     const { x, y } = coord;
@@ -51,13 +56,12 @@ function Board({ width, height, obstacleMax: ObstacleMax }:
   }, [setMouseCoord]);
 
   const onClickMarker = useCallback(() => {
-    boardMapDispatch({ type: 'BUILD_PRE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn });
-  }, [mouseCoord.x, mouseCoord.y, playerTurn]);
+    boardMapDispatch({ type: 'BUILD_PRE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn, gameWinner });
+  }, [mouseCoord.x, mouseCoord.y, playerTurn, gameWinner]);
 
   const onClickPreMarker = useCallback(() => {
-    boardMapDispatch({ type: 'MOVE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn });
-    boardMapDispatch({ type: 'PLAYER_TURN_END' });
-  }, [mouseCoord, playerTurn]);
+    boardMapDispatch({ type: 'MOVE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn, gameWinner });
+  }, [mouseCoord, playerTurn, gameWinner]);
 
   const switchObstacleDirectionMode = useCallback(() => {
     if (obstacleDirectionMode === 'horizontal') {
@@ -102,7 +106,7 @@ function Board({ width, height, obstacleMax: ObstacleMax }:
   return (
     <>
       <div>
-        {`xCoord: ${mouseCoord.x} yCoord: ${mouseCoord.y} payerTurn: ${playerTurn}`}
+        {`xCoord: ${mouseCoord.x} yCoord: ${mouseCoord.y} playerTurn: ${playerTurn} gameWinner: ${gameWinner}`}
       </div>
       { renderLeftObstacles('away') }
       <div style={boardStyle} onContextMenu={(e) => { e.preventDefault(); switchObstacleDirectionMode(); }}>

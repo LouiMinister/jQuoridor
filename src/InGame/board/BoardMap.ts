@@ -12,12 +12,14 @@ export class BoardMap {
   private spaces: Spaces = {};
   private playerTurn: 'home' | 'away';
   private platerLeftObstacle: {'home' : number, 'away': number};
+  private gameWinner: 'home' | 'away' | '';
   constructor(width: number, height: number, obstacleMax:number) {
     this.width = width;
     this.height = height;
     this.playerTurn = 'home';
     this.init();
     this.platerLeftObstacle = {'home' : obstacleMax, 'away': obstacleMax};
+    this.gameWinner = '';
   }
 
   private init() {
@@ -42,6 +44,10 @@ export class BoardMap {
 
   public getPlayerLeftObstacle(): {'home' : number, 'away': number} {
     return this.platerLeftObstacle;
+  }
+
+  public getGameWinner(): 'home' | 'away' | '' {
+    return this.gameWinner;
   }
 
   private playerTurnEnd() {
@@ -74,10 +80,32 @@ export class BoardMap {
   }
 
   public moveMarker(coord: Coord, owner: string) {
+    function gameEndCheck(BoardMap): 'away' | 'home' | ''{
+      var winner;
+      for (let key in BoardMap.spaces){
+        let space = BoardMap.spaces[key]
+        if (Number.isInteger(space.coord.x) && Number.isInteger(space.coord.y)) {
+          if (space.owner === 'away' && space.coord.y === 8){
+            alert('AWAY WIN');
+            winner = 'away';
+            break;
+          }
+          if (space.owner === 'home' && space.coord.y === 0){
+            alert('HOME WIN');
+            winner = 'home';
+            break;
+          }
+        } 
+      }
+      winner = Boolean(winner) ? winner : '';
+      return winner;
+    }
     this.clearSpaces(({ space }) => {
       return ((space.status === 'marker' || space.status === 'pre-marker') && space.owner === owner);
     });
     this.updateSpace({ coord: coord, status: 'marker', owner: owner });
+    this.gameWinner = gameEndCheck(this);
+    
     this.playerTurnEnd();
   }
 
@@ -86,7 +114,7 @@ export class BoardMap {
       platerLeftObstacle[playerTurn] -= 1;
       return;
     }
-
+    
     if (this.platerLeftObstacle[this.playerTurn] <= 0) { return; }
     if (!coord.isObstacleCenter()) { return; }
     const obstacle = new Obstacle(coord, direction, 'obstacle', owner);
@@ -182,6 +210,21 @@ export class BoardMap {
     }
   }
 
-
+  private gameEndCheck(){
+    this.getSpaceToAry(({ coord, space }) => {
+      if (Number.isInteger(coord.x) && Number.isInteger(coord.y)) {
+        if (space.owner === 'away' && coord.y === 8){
+          console.log('AWAY WIN');
+          this.gameWinner = 'away'
+          return;
+        }
+        if (space.owner === 'home' && coord.y === 0){
+          console.log('HOME WIN');
+          this.gameWinner = 'home'
+          return;
+        }
+      } 
+    })
+  }
 }
 

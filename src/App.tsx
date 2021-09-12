@@ -1,5 +1,4 @@
 import './App.css';
-import Board from './InGame/board/Board';
 import InGame from './InGame/InGame';
 
 function App() {
