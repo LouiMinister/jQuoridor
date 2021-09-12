@@ -13,12 +13,12 @@ export class BoardMap {
   private playerTurn: 'home' | 'away';
   private platerLeftObstacle: {'home' : number, 'away': number};
   private gameWinner: 'home' | 'away' | '';
-  constructor(width: number, height: number, obstacleMax:number) {
+  constructor(width: number, height: number, maxObstacle:number) {
     this.width = width;
     this.height = height;
     this.playerTurn = 'home';
     this.init();
-    this.platerLeftObstacle = {'home' : obstacleMax, 'away': obstacleMax};
+    this.platerLeftObstacle = {'home' : maxObstacle, 'away': maxObstacle};
     this.gameWinner = '';
   }
 
