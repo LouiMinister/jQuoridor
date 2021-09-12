@@ -14,6 +14,7 @@ export class BoardMap {
   private platerLeftObstacle: {'home' : number, 'away': number};
   private gameWinner: 'home' | 'away' | '';
   constructor(width: number, height: number, obstacleMax:number) {
+
     this.width = width;
     this.height = height;
     this.playerTurn = 'home';
@@ -43,7 +44,7 @@ export class BoardMap {
   }
 
   public getPlayerLeftObstacle(): {'home' : number, 'away': number} {
-    return this.platerLeftObstacle;
+    return this.playerLeftObstacle;
   }
 
   public getGameWinner(): 'home' | 'away' | '' {
@@ -124,12 +125,12 @@ export class BoardMap {
       this.updateSpace(obstacleBySpace);
     }
 
-    decreaseLeftObstacle(this.platerLeftObstacle, this.playerTurn);
+    decreaseLeftObstacle(this.playerLeftObstacle, this.playerTurn);
     this.playerTurnEnd();
   }
 
   public buildPreObstacle(coord: Coord, direction: obstacleDirection, owner: string) {
-    if (this.platerLeftObstacle[this.playerTurn] <= 0) { return; }
+    if (this.playerLeftObstacle[this.playerTurn] <= 0) { return; }
     if (!coord.isObstacleCenter()) { return; }
     const obstacle = new Obstacle(coord, direction, 'pre-obstacle', owner);
     if (this.isObstacleConflict(obstacle)) { return; }
@@ -226,5 +227,12 @@ export class BoardMap {
       } 
     })
   }
+  
+  public resetBoard(MaxObstacle){
+    this.playerTurn = 'home';
+    this.init();
+    this.playerLeftObstacle = {'home' : MaxObstacle, 'away': MaxObstacle};
+  }
+
 }
 

@@ -28,16 +28,19 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
       boardMap.moveMarker(new Coord(action.x, action.y), action.playerTurn);
       action.type = ''
       break;
+    case 'RESET_BOARD':
+      boardMap.resetBoard(action.MaxObstacle);
+      break;
   }
   return _.cloneDeep(boardMap);
 }
 
-function Board({ width, height, obstacleMax: ObstacleMax }:
-  { width: number, height: number, obstacleMax: number }) {
+function Board({ width, height, MaxObstacle }:
+  { width: number, height: number, MaxObstacle: number }) {
 
   const [mouseCoord, setMouseCoord] = useState({ x: 0, y: 0 });
   const [obstacleDirectionMode, setObstacleDirectionMode] = useState('horizontal' as ObstacleDirection)
-  const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height, ObstacleMax));
+  const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height, MaxObstacle));
   const playerTurn = useMemo(() => boardMap.getPlayerTurn(), [boardMap]);
   const playerLeftObstacle = useMemo(() => boardMap.getPlayerLeftObstacle(), [boardMap]);
   const gameWinner = useMemo(() => boardMap.getGameWinner(), [boardMap]);
@@ -63,6 +66,11 @@ function Board({ width, height, obstacleMax: ObstacleMax }:
     boardMapDispatch({ type: 'MOVE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn, gameWinner });
   }, [mouseCoord, playerTurn, gameWinner]);
 
+  const onClickResetButton = useCallback(() => {
+    boardMapDispatch({ type: 'RESET_BOARD', MaxObstacle:MaxObstacle });
+  }, [MaxObstacle]);
+
+
   const switchObstacleDirectionMode = useCallback(() => {
     if (obstacleDirectionMode === 'horizontal') {
       setObstacleDirectionMode('vertical');
@@ -72,14 +80,12 @@ function Board({ width, height, obstacleMax: ObstacleMax }:
   }, [obstacleDirectionMode])
 
   const renderLeftObstacles = ((player) => {
-    
-    {return <div style={leftObstacleWrapper}>
+    return <div style={leftObstacleWrapper}>
         {Array.from({ length: playerLeftObstacle[player]}, (v, i) => i).map((i) => {
           let leftObstacleKey = `${i}:${player}`;
           return <LeftObstacle key={leftObstacleKey}></LeftObstacle>;
         })}
       </div>
-      }
   })
 
   const boardStyle = useMemo(() => {
@@ -99,15 +105,16 @@ function Board({ width, height, obstacleMax: ObstacleMax }:
       justifyContent: "center",
       display: "grid",
       columnGap: "40px",
-      gridTemplateColumns: `repeat(${ObstacleMax}, 40px)`,
+      gridTemplateColumns: `repeat(${MaxObstacle}, 40px)`,
     };
-  }, [ObstacleMax]);
+  }, [MaxObstacle]);
 
   return (
     <>
       <div>
         {`xCoord: ${mouseCoord.x} yCoord: ${mouseCoord.y} playerTurn: ${playerTurn} gameWinner: ${gameWinner}`}
       </div>
+      <button onClick={() => onClickResetButton()}>RESET</button>
       { renderLeftObstacles('away') }
       <div style={boardStyle} onContextMenu={(e) => { e.preventDefault(); switchObstacleDirectionMode(); }}>
         {
