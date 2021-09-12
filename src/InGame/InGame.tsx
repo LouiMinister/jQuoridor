@@ -1,4 +1,4 @@
-import _ from 'lodash';
+// import _ from 'lodash';
 import { useState } from 'react';
 import Modal from 'react-modal';
 import useInput from 'src/hooks/useInput';

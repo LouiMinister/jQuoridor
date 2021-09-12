@@ -29,7 +29,7 @@ function boardMapReducer(boardMap: BoardMap, action): BoardMap {
       action.type = ''
       break;
     case 'RESET_BOARD':
-      boardMap.resetBoard(action.MaxObstacle);
+      boardMap.resetBoard(action.maxObstacle);
       break;
   }
   return _.cloneDeep(boardMap);
@@ -43,15 +43,15 @@ function Board({ width, height, maxObstacle }:
   const [boardMap, boardMapDispatch] = useReducer(boardMapReducer, new BoardMap(width, height, maxObstacle));
   const playerTurn = useMemo(() => boardMap.getPlayerTurn(), [boardMap]);
   const playerLeftObstacle = useMemo(() => boardMap.getPlayerLeftObstacle(), [boardMap]);
-  const gameWinner = useMemo(() => boardMap.getGameWinner(), [boardMap]);
+  const winner = useMemo(() => boardMap.getWinner(), [boardMap]);
 
   useEffect(() => {
-    boardMapDispatch({ type: 'BUILD_PRE_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn, gameWinner});
-  }, [mouseCoord, obstacleDirectionMode, playerTurn, gameWinner])
+    boardMapDispatch({ type: 'BUILD_PRE_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn, gameWinner: winner});
+  }, [mouseCoord, obstacleDirectionMode, playerTurn, winner])
 
   const onClickGutter = useCallback(() => {
-    boardMapDispatch({ type: 'BUILD_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn, gameWinner });
-  }, [mouseCoord, obstacleDirectionMode, playerTurn, gameWinner]);
+    boardMapDispatch({ type: 'BUILD_OBSTACLE', x: mouseCoord.x, y: mouseCoord.y, obstacleDirectionMode, playerTurn, gameWinner: winner });
+  }, [mouseCoord, obstacleDirectionMode, playerTurn, winner]);
 
   const onMouseOver = useCallback((coord) => {
     const { x, y } = coord;
@@ -59,12 +59,12 @@ function Board({ width, height, maxObstacle }:
   }, [setMouseCoord]);
 
   const onClickMarker = useCallback(() => {
-    boardMapDispatch({ type: 'BUILD_PRE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn, gameWinner });
-  }, [mouseCoord.x, mouseCoord.y, playerTurn, gameWinner]);
+    boardMapDispatch({ type: 'BUILD_PRE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn, gameWinner: winner });
+  }, [mouseCoord.x, mouseCoord.y, playerTurn, winner]);
 
   const onClickPreMarker = useCallback(() => {
-    boardMapDispatch({ type: 'MOVE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn, gameWinner });
-  }, [mouseCoord, playerTurn, gameWinner]);
+    boardMapDispatch({ type: 'MOVE_MARKER', x: mouseCoord.x, y: mouseCoord.y, playerTurn, gameWinner: winner });
+  }, [mouseCoord, playerTurn, winner]);
 
   const onClickResetButton = useCallback(() => {
     boardMapDispatch({ type: 'RESET_BOARD', maxObstacle });
@@ -112,7 +112,7 @@ function Board({ width, height, maxObstacle }:
   return (
     <>
       <div>
-        {`xCoord: ${mouseCoord.x} yCoord: ${mouseCoord.y} playerTurn: ${playerTurn} gameWinner: ${gameWinner}`}
+        {`xCoord: ${mouseCoord.x} yCoord: ${mouseCoord.y} playerTurn: ${playerTurn} gameWinner: ${winner}`}
       </div>
       <button onClick={() => onClickResetButton()}>RESET</button>
       { renderLeftObstacles('away') }
