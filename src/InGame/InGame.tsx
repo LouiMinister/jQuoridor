@@ -47,7 +47,7 @@ function InGame() {
           </div>
           <button onClick={() => onSubmit()}>submit</button>
         </Modal>
-        <Board width={9} height={9} obstacleMax={10} />
+        <Board width={9} height={9} MaxObstacle={10} />
       </div>
     </>
   );
